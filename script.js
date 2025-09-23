@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Funzione per caricare i dati JSON
     async function fetchPosts() {
         try {
-            const response = await fetch('posts.json');
+            const response = await fetch('post.json');
             const posts = await response.json();
             displayPosts(posts);
         } catch (error) {
