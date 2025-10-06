@@ -1,42 +1,68 @@
+<?php
+// === LOGICA DEL SERVER: Legge il file di testo per i dati del video ===
+
+$config_file = '../dati_video.txt'; 
+$config = [];
+
+if (file_exists($config_file)) {
+    $lines = file($config_file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    
+    foreach ($lines as $line) {
+        if (strpos($line, '=') !== false) {
+            list($key, $value) = explode('=', $line, 2);
+            $config[trim($key)] = trim($value);
+        }
+    }
+
+    // Assegna le variabili dai dati del file
+    $video_file = htmlspecialchars($config['VIDEO_FILE'] ?? ''); // NOME DEL FILE VIDEO
+    $titolo_pagina = htmlspecialchars($config['TITOLO_PAGINA'] ?? 'Video del Momento');
+    $titolo_video = htmlspecialchars($config['TITOLO_VIDEO'] ?? 'Titolo non trovato');
+    $descrizione = htmlspecialchars($config['DESCRIZIONE'] ?? 'Descrizione non disponibile.');
+
+} else {
+    // Messaggio di errore se il file non è presente
+    $titolo_pagina = "Errore di Configurazione";
+    $titolo_video = "Impossibile caricare il video";
+    $descrizione = "Il file di configurazione dati_video.txt non è stato trovato.";
+    $video_file = "";
+}
+?>
+
 <!DOCTYPE html>
 <html lang="it">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Miki e Roberto | Video del Momento</title>
+    <title>Miki e Roberto | <?php echo $titolo_pagina; ?></title>
     <link rel="stylesheet" href="../style.css">
 </head>
 <body>
 
     <header>
-        <nav>
-            <ul>
-                <li><a href="../index.html">Homepage</a></li>
-                <li><a href="chi-siamo.html">Chi siamo</a></li>
-                <li><a href="video.php">Video del Momento</a></li>
-            </ul>
-        </nav>
-    </header>
+        </header>
 
     <main class="video-container">
         <section class="video-box">
             
-            <h1>Il nostro weekend sul Lago di Garda!</h1>
+            <h1><?php echo $titolo_video; ?></h1>
             
             <div class="video-embed">
-                <iframe 
-                    width="100%" 
-                    height="500" 
-                    src="https://www.youtube.com/embed/YOUR_NEW_VIDEO_ID" 
-                    frameborder="0" 
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                    allowfullscreen>
-                </iframe>
+                <?php if (!empty($video_file) && file_exists('../' . $video_file)): ?>
+                
+                <video controls width="100%" height="auto">
+                    <source src="../<?php echo $video_file; ?>" type="video/mp4">
+                    Il tuo browser non supporta il tag video.
+                </video>
+                
+                <?php else: ?>
+                    <p style="color: red; text-align: center;">Errore: Il file video specificato non è stato trovato sul server.</p>
+                <?php endif; ?>
             </div>
 
             <div class="video-descrizione">
                 <h2>Descrizione</h2>
-                <p>Una breve fuga romantica sul Lago di Garda, tra gite in barca e panorami mozzafiato. Vi mostriamo i posti più belli che abbiamo visitato e vi diamo qualche consiglio utile per il vostro prossimo viaggio.</p>
+                <p><?php echo $descrizione; ?></p>
                 <a href="#" class="btn">Guarda altri video</a>
             </div>
         </section>
@@ -48,4 +74,3 @@
 
 </body>
 </html>
-          
