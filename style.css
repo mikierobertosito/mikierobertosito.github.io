@@ -180,3 +180,60 @@ footer {
     margin-top: 20px;
     font-size: 14px;
 }
+
+/* --- STILI PAGINA VIDEO DEL MOMENTO --- */
+
+.video-container {
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+.video-box {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.video-box h1 {
+    text-align: center;
+    margin-bottom: 25px;
+    color: #2c3e50;
+}
+
+/* Stile per l'embed del video (assicura che sia responsive) */
+.video-embed {
+    position: relative;
+    padding-bottom: 56.25%; /* Rapporto d'aspetto 16:9 */
+    height: 0;
+    overflow: hidden;
+    margin-bottom: 30px;
+}
+
+.video-embed iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.video-descrizione h2 {
+    text-align: left;
+    color: #1abc9c;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+}
+
+.video-descrizione p {
+    font-size: 1.1em;
+    line-height: 1.8;
+}
+
+/* Allinea il bottone (riutilizzando la classe .btn) */
+.video-descrizione .btn {
+    display: inline-block;
+    margin-top: 25px;
+}
