@@ -19,16 +19,22 @@ document.addEventListener('DOMContentLoaded', () => {
         posts.forEach(post => {
             const postElement = document.createElement('article');
             postElement.className = 'blog-post';
-            postElement.innerHTML = `
-                <h3>${post.titolo}</h3>
-                <p>${post.descrizione}</p>
-                <p class="post-data">Pubblicato il: ${post.data}</p>
-                <a href="#" class="btn">Leggi di più</a>
-            `;
-            postsContainer.appendChild(postElement);
-        });
-    }
+            postElement.innerHTML = // Funzione per mostrare i post sulla pagina
+function displayPosts(posts) {
+    const postsContainer = document.getElementById('posts-container');
+    postsContainer.innerHTML = ''; 
 
-    // Carica i post quando la pagina è pronta
-    fetchPosts();
-});
+    posts.forEach(post => {
+        const postElement = document.createElement('article');
+        postElement.className = 'blog-post';
+        
+        // ATTENZIONE QUI: il link DEVE essere solo sul bottone.
+        postElement.innerHTML = `
+            <h3>${post.titolo}</h3>
+            <p>${post.descrizione}</p>
+            <p class="post-data">Pubblicato il: ${post.data}</p>
+            <a href="pagine/video.php" class="btn">Leggi di più</a>  <-- Solo qui c'è il link!
+        `;
+        postsContainer.appendChild(postElement);
+    });
+}
