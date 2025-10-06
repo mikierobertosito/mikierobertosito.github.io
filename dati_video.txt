@@ -1,4 +1,4 @@
 TITOLO_PAGINA=Il Video Caricato da Noi!
-TITOLO_VIDEO=La nostra ultima gita al lago
-VIDEO_FILE=video/mia_vacanza.mp4  <-- INSERISCI IL NOME DEL FILE E IL PERCORSO
-DESCRIZIONE=In questo video vi portiamo con noi alla scoperta dei posti più nascosti del Lago di Como.
+TITOLO_VIDEO=ANGELA PRIME
+VIDEO_FILE=
+DESCRIZIONE=
