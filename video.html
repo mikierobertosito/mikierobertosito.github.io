@@ -19,24 +19,15 @@
     </header>
 
     <main class="video-container">
-        <?php 
-            // QUESTO È UN ESEMPIO CON PHP. Sostituisci con la logica del tuo linguaggio.
-            // In un sito PHP, un'area del genere verrebbe popolata da un database.
-            
-            // Dati Fittizi (da sostituire con il recupero dal tuo database/server)
-            $video_url = "https://www.youtube.com/embed/YOUR_VIDEO_ID"; 
-            $titolo = "La nostra ultima avventura in Sicilia!";
-            $descrizione = "Dopo mesi di pianificazione, siamo finalmente partiti per un'escursione pazzesca sull'Etna. Guarda il nostro video completo per le riprese dal drone e tutte le sfide che abbiamo affrontato.";
-        ?>
-
         <section class="video-box">
-            <h1><?php echo $titolo; ?></h1>
+            
+            <h1>Il nostro weekend sul Lago di Garda!</h1>
             
             <div class="video-embed">
                 <iframe 
                     width="100%" 
                     height="500" 
-                    src="<?php echo $video_url; ?>" 
+                    src="https://www.youtube.com/embed/YOUR_NEW_VIDEO_ID" 
                     frameborder="0" 
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
                     allowfullscreen>
@@ -45,7 +36,7 @@
 
             <div class="video-descrizione">
                 <h2>Descrizione</h2>
-                <p><?php echo $descrizione; ?></p>
+                <p>Una breve fuga romantica sul Lago di Garda, tra gite in barca e panorami mozzafiato. Vi mostriamo i posti più belli che abbiamo visitato e vi diamo qualche consiglio utile per il vostro prossimo viaggio.</p>
                 <a href="#" class="btn">Guarda altri video</a>
             </div>
         </section>
@@ -57,3 +48,4 @@
 
 </body>
 </html>
+          
