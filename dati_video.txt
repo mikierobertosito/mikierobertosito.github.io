@@ -1,4 +1,4 @@
 TITOLO_PAGINA=videoo
 TITOLO_VIDEO=Angela prime
-VIDEO_FILE=SmartSelect_20251006_232033_YouTube.gif
-DESCRIZIONE=coming sono...
+VIDEO_FILE=Spider Dance.mp4
+DESCRIZIONE=
