@@ -47,7 +47,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const contentArea = document.getElementById('video-content-area');
         
         const videoTitle = config['TITOLO_VIDEO'] || 'angela bossfight';
-        const videoFile = config['VIDEO_FILE'] || 'Spider Dance.mp4';
+        const videoFile = config['VIDEO_FILE'] || '32. L'attacco della regina assassina (colonna
+
+sonora del capitolo 2 di DELTARUNE) - Toby Fox.mp4';
         const description = config['DESCRIZIONE'] || 'crediti toby fox';
         
         // Aggiorna il titolo principale
