@@ -1,47 +1,39 @@
-<body>
-    <main class="dashboard-container">
-        <div class="dashboard-header">
-            <h1>Ciao, Utente!</h1>
-            <p>Benvenuto nella tua area personale. Qui puoi creare e gestire i tuoi articoli.</p>
-        </div>
+// La chiave che useremo in localStorage per simulare la sessione
+const SESSION_KEY = 'isLoggedIn';
 
-        <section class="post-creation-box" id="post-creation-section"> 
-            <h2>Crea un Nuovo Post</h2>
-            <form action="#">
-                <div class="form-group">
-                    <label for="post-title">Titolo del Post</label>
-                    <input type="text" id="post-title" name="title" required>
-                </div>
-                <div class="form-group">
-                    <label for="post-content">Contenuto</label>
-                    <textarea id="post-content" name="content" required></textarea>
-                </div>
-                <button type="submit" class="btn">Pubblica Post (Solo Demo)</button>
-            </form>
-        </section>
+/**
+ * Funzione per simulare l'accesso (salva una "sessione" nel browser)
+ */
+function loginUser() {
+    // Salviamo una stringa nel browser che indica che l'utente è "loggato"
+    localStorage.setItem(SESSION_KEY, 'true');
+    // Reindirizziamo l'utente alla pagina del profilo
+    window.location.href = 'profilo.html';
+}
 
-        </main>
+/**
+ * Funzione per simulare il logout (rimuove la "sessione")
+ */
+function logoutUser() {
+    localStorage.removeItem(SESSION_KEY);
+    // Reindirizziamo l'utente alla pagina di login
+    window.location.href = 'login.html';
+}
 
-    <footer>
-        </footer>
+/**
+ * Funzione per verificare se l'utente è "loggato"
+ */
+function checkAuth() {
+    return localStorage.getItem(SESSION_KEY) === 'true';
+}
 
-    <script src="../auth.js"></script>
-    <script>
-        // Verifichiamo se l'utente ha la sessione attiva
-        const isUserAuthenticated = checkAuth();
-        const postSection = document.getElementById('post-creation-section');
-
-        if (isUserAuthenticated) {
-            // Se loggato, mostra la sezione (se fosse stata nascosta da CSS)
-            postSection.style.display = 'block'; 
-        } else {
-            // Se NON loggato, nascondi la sezione e avvisa
-            postSection.innerHTML = `
-                <h2 style="color: red;">Accesso Negato!</h2>
-                <p>Devi effettuare il <a href="login.html">Login</a> per poter creare nuovi post.</p>
-            `;
-        }
-    </script>
-
-</body>
-</html>
+// Aggiungi un ascoltatore per il logout se il link ha l'ID 'logout-btn'
+document.addEventListener('DOMContentLoaded', () => {
+    const logoutBtn = document.getElementById('logout-btn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            logoutUser();
+        });
+    }
+});
