@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Miki e Roberto | Login</title>
+    <title>Miki e Roberto | Registrazione</title>
     <link rel="stylesheet" href="../style.css">
 </head>
 <body>
@@ -13,26 +13,30 @@
             <ul>
                 <li><a href="../index.html">Homepage</a></li>
                 <li><a href="chi-siamo.html">Chi siamo</a></li>
-                <li><a href="regista.html">Registrati</a></li>
+                <li><a href="login.html">Login</a></li>
             </ul>
         </nav>
     </header>
 
     <main class="login-container">
         <section class="login-box">
-            <h1>Accedi</h1>
-            <form action="#">
+            <h1>Registrati</h1>
+            <form action="#" method="POST">
                 <div class="form-group">
                     <label for="username">Nome utente</label>
                     <input type="text" id="username" name="username" required>
                 </div>
                 <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
                     <label for="password">Password</label>
                     <input type="password" id="password" name="password" required>
                 </div>
-                <button type="submit" class="btn">Accedi</button>
+                <button type="submit" class="btn">Registrati</button>
             </form>
-            <p class="signup-link">Non hai un account? <a href="registrazione.html">Registrati qui</a></p>
+            <p class="signup-link">Hai già un account? <a href="login.html">Accedi qui</a></p>
         </section>
     </main>
 
