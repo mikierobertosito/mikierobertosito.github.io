@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const contentArea = document.getElementById('video-content-area');
         
         const videoTitle = config['TITOLO_VIDEO'] || 'angela bossfight';
-        const videoFile = config['VIDEO_FILE'] || '';
+        const videoFile = config['VIDEO_FILE'] || '32. Attack of the Killer Queen (DELTARUNE Chapter 2 Soundtrack) - Toby Fox.mp4';
         const description = config['DESCRIZIONE'] || 'crediti toby fox';
         
         // Aggiorna il titolo principale
