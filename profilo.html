@@ -1,14 +1,78 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Miki e Roberto | Il Mio Profilo</title>
+    <link rel="stylesheet" href="../style.css">
+    <style>
+        /* Stili aggiuntivi per la dashboard (puoi spostarli in style.css se preferisci) */
+        .dashboard-container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+        .dashboard-header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 20px;
+            border-radius: 8px 8px 0 0;
+            margin-bottom: 30px;
+        }
+        .dashboard-header h1 {
+            margin: 0;
+        }
+        .post-creation-box {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+        }
+        .post-creation-box textarea,
+        .post-creation-box input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        .post-creation-box textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+    </style>
+</head>
 <body>
+
+    <header>
+        <nav>
+            <ul>
+                <li><a href="../index.html">Homepage</a></li>
+                <li><a href="chi-siamo.html">Chi siamo</a></li>
+                <li><a href="archivio.html">Archivio Post</a></li>
+                <li><a href="login.html" id="logout-btn">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+
     <main class="dashboard-container">
-<link rel="stylesheet" href="../style.css">
+        
         <div class="dashboard-header">
             <h1>Ciao, Utente!</h1>
             <p>Benvenuto nella tua area personale. Qui puoi creare e gestire i tuoi articoli.</p>
         </div>
 
         <section class="post-creation-box" id="post-creation-section"> 
+            
             <h2>Crea un Nuovo Post</h2>
-            <form action="#">
+            
+            <div style="background-color: #fff3cd; color: #856404; padding: 10px; border-radius: 5px; margin-bottom: 20px; border: 1px solid #ffeeba;">
+                💡 **Avviso per lo Sviluppatore:** L'azione `POST` di questo modulo verrà bloccata dall'hosting statico. Funzionerà solo su un hosting con supporto PHP/Database.
+            </div>
+
+            <form action="salva_post.php" method="POST"> 
                 <div class="form-group">
                     <label for="post-title">Titolo del Post</label>
                     <input type="text" id="post-title" name="title" required>
@@ -17,31 +81,41 @@
                     <label for="post-content">Contenuto</label>
                     <textarea id="post-content" name="content" required></textarea>
                 </div>
-                <button type="submit" class="btn">Pubblica Post (Solo Demo)</button>
+                <button type="submit" class="btn">Pubblica Post</button>
             </form>
         </section>
 
-        </main>
+        <section class="post-list">
+            <h2>I Tuoi Ultimi Post</h2>
+            <p>In un sito funzionante, i tuoi post apparirebbero qui dopo il salvataggio nel database.</p>
+            
+            <article class="blog-post">
+                <h3>Post Fittizio: Primo Articolo di Prova</h3>
+                <p>Questo è un esempio di post che vedresti nel tuo archivio personale.</p>
+                <p class="post-data">Pubblicato il: Oggi</p>
+            </article>
+        </section>
+    </main>
 
     <footer>
-        </footer>
+        <p>&copy; 2025 Miki e Roberto. Tutti i diritti riservati.</p>
+    </footer>
 
     <script src="../auth.js"></script>
     <script>
-        // Verifichiamo se l'utente ha la sessione attiva
+        // Verifichiamo se l'utente è "loggato" (tramite localStorage)
         const isUserAuthenticated = checkAuth();
         const postSection = document.getElementById('post-creation-section');
 
-        if (isUserAuthenticated) {
-            // Se loggato, mostra la sezione (se fosse stata nascosta da CSS)
-            postSection.style.display = 'block'; 
-        } else {
+        // Logica per forzare l'accesso
+        if (!isUserAuthenticated) {
             // Se NON loggato, nascondi la sezione e avvisa
             postSection.innerHTML = `
                 <h2 style="color: red;">Accesso Negato!</h2>
                 <p>Devi effettuare il <a href="login.html">Login</a> per poter creare nuovi post.</p>
             `;
         }
+        // Se loggato, la sezione rimane visibile.
     </script>
 
 </body>
