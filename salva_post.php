@@ -1,49 +1,63 @@
 <?php
-// === Questo codice richiede un ambiente PHP e un Database (es. MySQL) per funzionare ===
+// === Questo script richiede PHP con permessi di scrittura sul file HTML ===
 
-// 1. Inizia una sessione (necessaria per identificare l'utente loggato)
-session_start();
-
-// 2. Controlla se l'utente è loggato
-if (!isset($_SESSION['user_id'])) {
-    // Se non è loggato, reindirizza al login
-    header("Location: login.html?errore=accesso_negato");
+// 1. Inizializzazione e controllo del metodo
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    header("Location: profilo.html");
     exit();
 }
 
-// 3. Verifica i dati inviati tramite POST dal modulo
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    
-    // Filtra e pulisci i dati
-    $titolo = filter_input(INPUT_POST, 'title', FILTER_SANITIZE_STRING);
-    $contenuto = filter_input(INPUT_POST, 'content', FILTER_SANITIZE_STRING);
-    $user_id = $_SESSION['user_id'];
-    
-    // 4. Validazione finale
-    if (empty($titolo) || empty($contenuto)) {
-        header("Location: profilo.html?errore=campi_vuoti");
-        exit();
-    }
-    
-    // =========================================================================
-    // QUI AVVIENE L'AZIONE CRUCIALE: SALVATAGGIO NEL DATABASE
-    // =========================================================================
-    
-    // ESEMPIO CON PHP/PDO per l'inserimento nel database
-    
-    // $db = new PDO('mysql:host=localhost;dbname=sito_miki_roberto', 'root', 'password');
-    // $stmt = $db->prepare("INSERT INTO posts (user_id, titolo, contenuto, data_pubblicazione) VALUES (:uid, :titolo, :cont, NOW())");
-    // $stmt->execute(['uid' => $user_id, 'titolo' => $titolo, 'cont' => $contenuto]);
-    
-    // =========================================================================
-    
-    // 5. Successo: reindirizza alla pagina Archivio o Profilo con conferma
-    header("Location: archivio.html?successo=post_pubblicato");
-    exit();
+// 2. Ricezione e pulizia dei dati
+// Assumiamo che l'utente sia "loggato" per coerenza con il profilo
+$username_fittizio = 'Utente ID ' . rand(100, 999);
+$data = date('d M Y'); 
 
+$titolo = filter_input(INPUT_POST, 'title', FILTER_SANITIZE_STRING);
+$contenuto = filter_input(INPUT_POST, 'content', FILTER_SANITIZE_STRING);
+
+if (empty($titolo) || empty($contenuto)) {
+    header("Location: profilo.html?errore=campi_vuoti");
+    exit();
+}
+
+// 3. Generazione del nuovo blocco HTML (il post)
+$nuovo_post_html = <<<HTML
+                <article class="blog-post">
+                    <h3>$titolo</h3>
+                    <p>$contenuto</p>
+                    <p class="post-data">Pubblicato da: **$username_fittizio** il $data</p>
+                </article>
+HTML;
+
+// 4. Caricamento del file Archivio HTML
+$file_archivio_path = 'archivio.html';
+$contenuto_archivio = file_get_contents($file_archivio_path);
+
+// 5. Trovare il punto dove iniettare il nuovo post
+// Dobbiamo definire un "segnaposto" nel file archivio.html
+$segnaposto = '<div id="posts-container" class="blog-grid">'; 
+
+// 6. Iniezione del nuovo codice: Inseriamo il nuovo post DOPO il segnaposto
+if (strpos($contenuto_archivio, $segnaposto) !== false) {
+    // Troviamo la posizione dove si chiude il segnaposto
+    $posizione_iniezione = strpos($contenuto_archivio, $segnaposto) + strlen($segnaposto);
+    
+    // Inseriamo il nuovo post dopo il segnaposto, ma prima del contenuto esistente (per averlo in cima)
+    $nuovo_contenuto_archivio = 
+        substr($contenuto_archivio, 0, $posizione_iniezione) . 
+        "\n" . $nuovo_post_html . "\n" . 
+        substr($contenuto_archivio, $posizione_iniezione);
+        
+    // 7. Scrittura del file aggiornato (sovrascrive l'archivio.html)
+    file_put_contents($file_archivio_path, $nuovo_contenuto_archivio);
+    
+    // 8. Successo: reindirizza all'archivio per vedere il nuovo post
+    header("Location: archivio.html?post_inviato");
+    exit();
+    
 } else {
-    // Se la richiesta non è POST, reindirizza alla homepage
-    header("Location: ../index.html");
+    // Errore: segnaposto non trovato
+    header("Location: profilo.html?errore=configurazione_archivio_sbagliata");
     exit();
 }
 ?>
