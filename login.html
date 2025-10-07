@@ -1,27 +1,7 @@
-<!DOCTYPE html>
-<html lang="it">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Miki e Roberto | Login</title>
-    <link rel="stylesheet" href="../style.css">
-</head>
-<body>
-
-    <header>
-        <nav>
-            <ul>
-                <li><a href="../index.html">Homepage</a></li>
-                <li><a href="chi-siamo.html">Chi siamo</a></li>
-                <li><a href="registrazione.html">Registrati</a></li>
-            </ul>
-        </nav>
-    </header>
-
-    <main class="login-container">
+<main class="login-container">
         <section class="login-box">
             <h1>Accedi</h1>
-            <form action="#"> 
+            <form id="login-form"> 
                 <div class="form-group">
                     <label for="username">Nome utente o Email</label>
                     <input type="text" id="username" name="username" required>
@@ -36,9 +16,14 @@
         </section>
     </main>
 
-    <footer>
-        <p>&copy; 2024 Miki e Roberto. Tutti i diritti riservati.</p>
-    </footer>
-
-</body>
-</html>
+    <script src="../auth.js"></script>
+    <script>
+        // Aggiunge l'evento di click per chiamare loginUser()
+        document.getElementById('login-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            // In un sito reale, qui verrebbero verificate le credenziali con il server.
+            // Qui simuliamo l'accesso.
+            loginUser();
+        });
+    </script>
+    
