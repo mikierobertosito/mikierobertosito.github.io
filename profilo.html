@@ -1,69 +1,11 @@
-<!DOCTYPE html>
-<html lang="it">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Miki e Roberto | Il Mio Profilo</title>
-    <link rel="stylesheet" href="../style.css">
-    <style>
-        /* Stili aggiuntivi per la dashboard */
-        .dashboard-container {
-            max-width: 900px;
-            margin: 40px auto;
-            padding: 20px;
-        }
-        .dashboard-header {
-            background-color: #2c3e50;
-            color: white;
-            padding: 20px;
-            border-radius: 8px 8px 0 0;
-            margin-bottom: 30px;
-        }
-        .dashboard-header h1 {
-            margin: 0;
-        }
-        .post-creation-box {
-            background-color: #fff;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            margin-bottom: 30px;
-        }
-        .post-creation-box textarea,
-        .post-creation-box input[type="text"] {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            box-sizing: border-box;
-        }
-        .post-creation-box textarea {
-            min-height: 150px;
-            resize: vertical;
-        }
-    </style>
-</head>
 <body>
-
-    <header>
-        <nav>
-            <ul>
-                <li><a href="../index.html">Homepage</a></li>
-                <li><a href="chi-siamo.html">Chi siamo</a></li>
-                <li><a href="profilo.html">Profilo</a></li>
-                <li><a href="login.html">Logout</a></li>
-            </ul>
-        </nav>
-    </header>
-
     <main class="dashboard-container">
         <div class="dashboard-header">
-            <h1>Ciao, [Nome Utente]!</h1>
+            <h1>Ciao, Utente!</h1>
             <p>Benvenuto nella tua area personale. Qui puoi creare e gestire i tuoi articoli.</p>
         </div>
 
-        <section class="post-creation-box">
+        <section class="post-creation-box" id="post-creation-section"> 
             <h2>Crea un Nuovo Post</h2>
             <form action="#">
                 <div class="form-group">
@@ -78,21 +20,28 @@
             </form>
         </section>
 
-        <section class="post-list">
-            <h2>I Tuoi Ultimi Post</h2>
-            <p>I post creati qui verrebbero visualizzati in una vera piattaforma, ma non saranno salvati su questo sito statico.</p>
-            
-            <article class="blog-post">
-                <h3>Post Fittizio: Primo Articolo di Prova</h3>
-                <p>Questo è un esempio di post che vedresti nel tuo archivio personale.</p>
-                <p class="post-data">Pubblicato il: Oggi</p>
-            </article>
-        </section>
-    </main>
+        </main>
 
     <footer>
-        <p>&copy; 2024 Miki e Roberto. Tutti i diritti riservati.</p>
-    </footer>
+        </footer>
+
+    <script src="../auth.js"></script>
+    <script>
+        // Verifichiamo se l'utente ha la sessione attiva
+        const isUserAuthenticated = checkAuth();
+        const postSection = document.getElementById('post-creation-section');
+
+        if (isUserAuthenticated) {
+            // Se loggato, mostra la sezione (se fosse stata nascosta da CSS)
+            postSection.style.display = 'block'; 
+        } else {
+            // Se NON loggato, nascondi la sezione e avvisa
+            postSection.innerHTML = `
+                <h2 style="color: red;">Accesso Negato!</h2>
+                <p>Devi effettuare il <a href="login.html">Login</a> per poter creare nuovi post.</p>
+            `;
+        }
+    </script>
 
 </body>
 </html>
