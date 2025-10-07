@@ -13,7 +13,8 @@
             <ul>
                 <li><a href="../index.html">Homepage</a></li>
                 <li><a href="chi-siamo.html">Chi siamo</a></li>
-                <li><a href="video.html">Video del Momento</a></li> <li><a href="login.html">Login</a></li>
+                <li><a href="video.html">Video del Momento</a></li> 
+                <li><a href="login.html">Login</a></li>
             </ul>
         </nav>
     </header>
@@ -34,7 +35,93 @@
         <p>&copy; 2025 Miki e Roberto. Tutti i diritti riservati.</p>
     </footer>
 
-    <script src="../video_loader.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Il percorso del file di dati, relativo alla posizione di video.html
+            const dataFile = '../dati_video.txt'; 
+
+            async function loadVideoData() {
+                try {
+                    // 1. Richiedi il file di testo
+                    const response = await fetch(dataFile);
+                    if (!response.ok) {
+                        throw new Error(`Impossibile trovare il file: ${response.status}`);
+                    }
+                    const dataText = await response.text();
+
+                    // 2. Analizza i dati
+                    const config = parseDataText(dataText);
+
+                    // 3. Genera l'HTML
+                    displayVideo(config);
+
+                } catch (error) {
+                    console.error('Errore nel caricamento dei dati video:', error);
+                    document.getElementById('video-content-area').innerHTML = `
+                        <p style="color: red; text-align: center;">
+                            Errore: Non è stato possibile caricare i dati video dal file dati_video.txt. 
+                            (Controlla che il file esista nella cartella principale)
+                        </p>`;
+                    document.getElementById('video-title').textContent = "Errore di Caricamento";
+                }
+            }
+
+            // Funzione per analizzare le coppie chiave=valore
+            function parseDataText(text) {
+                const config = {};
+                const lines = text.split('\n');
+                
+                lines.forEach(line => {
+                    const parts = line.split('=', 2).map(p => p.trim());
+                    if (parts.length === 2) {
+                        config[parts[0]] = parts[1];
+                    }
+                });
+                return config;
+            }
+
+            // Funzione per inserire l'HTML generato nella pagina
+            function displayVideo(config) {
+                const titleElement = document.getElementById('video-title');
+                const contentArea = document.getElementById('video-content-area');
+                
+                const videoTitle = config['TITOLO_VIDEO'] || 'Titolo non trovato';
+                const videoFile = config['VIDEO_FILE'] || '32. Attack of the Killer Queen (DELTARUNE Chapter 2 Soundtrack) - Toby Fox.mp4';
+                const description = config['DESCRIZIONE'] || 'Descrizione non disponibile.';
+                
+                // Aggiorna il titolo principale
+                titleElement.textContent = videoTitle;
+                
+                // Se i dati ci sono, genera il player
+                if (videoFile) {
+                    // Percorso del video: da 'pagine/' deve uscire (../) per trovare la cartella 'video/'
+                    const videoSrc = `../${videoFile}`; 
+                    
+                    contentArea.innerHTML = `
+                        <div class="video-embed">
+                            <video controls width="100%" height="auto">
+                                <source src="${videoSrc}" type="video/mp4"> 
+                                Il tuo browser non supporta il tag video.
+                            </video>
+                        </div>
+                        <div class="video-descrizione">
+                            <h2>Descrizione</h2>
+                            <p>${description}</p>
+                            <a href="#" class="btn">Guarda altri video</a>
+                        </div>
+                    `;
+                } else {
+                    contentArea.innerHTML = `
+                        <p style="color: red; text-align: center;">
+                            Errore: Il percorso del video non è specificato nel file dati_video.txt.
+                        </p>
+                    `;
+                }
+            }
+
+            loadVideoData();
+        });
+    </script>
 
 </body>
 </html>
