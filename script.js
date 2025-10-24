@@ -7,10 +7,10 @@ const STORAGE_KEY = 'clientFilesDB';
 // Chiave per lo stato di login (usa sessionStorage per forzare il login ad ogni apertura scheda)
 const IS_LOGGED_IN_KEY = 'isLoggedInSession'; 
 
-// Credenziali Utenti
+// Credenziali Utenti hardcoded
 const USERS = {
-    'miki': 'miki1209la',
-    'roberto': 'robertomartino2'
+    'miki': 'miki',
+    'roberto': 'roberto'
 };
 
 // Funzione di Autenticazione (usata in index.html)
@@ -28,7 +28,8 @@ function handleLogin() {
         if (USERS[username] && USERS[username] === password) {
             // LOGIN OK: salva lo stato NELLA SESSIONE CORRENTE
             sessionStorage.setItem(IS_LOGGED_IN_KEY, 'true'); 
-            window.location.href = 'dashboard.html';
+            // Reindirizza alla dashboard
+            window.location.href = 'dashboard.html'; 
         } else {
             // LOGIN FALLITO
             errorMessage.textContent = 'Nome utente o password non validi.';
@@ -45,18 +46,17 @@ function handleLogout() {
     logoutButton.addEventListener('click', function() {
         // Rimuovi lo stato di login dalla sessione
         sessionStorage.removeItem(IS_LOGGED_IN_KEY); 
-        // Reindirizza al login
+        // Torna al login
         window.location.href = 'index.html'; 
     });
 }
 
-// Controlla lo stato di autenticazione
+// Controlla lo stato di autenticazione e reindirizza se necessario
 function checkAuth(isDashboard) {
-    // Legge lo stato SOLO da sessionStorage
     const isLoggedIn = sessionStorage.getItem(IS_LOGGED_IN_KEY) === 'true'; 
     
     if (isDashboard && !isLoggedIn) {
-        // Se si tenta di accedere alla dashboard senza sessione attiva, reindirizza
+        // Se sulla dashboard ma non loggato, reindirizza al login
         window.location.href = 'index.html';
     } 
 }
@@ -113,7 +113,7 @@ function renderFiles() {
         row.insertCell().textContent = file.id;
         row.insertCell().textContent = file.name;
         
-        // Questo è il campo "Contenuto" che mostra il testo che hai scritto
+        // Contenuto: mostra il testo che hai scritto
         const contentCell = row.insertCell();
         contentCell.textContent = file.content.length > 50 ? 
                                   file.content.substring(0, 50) + '...' : 
@@ -168,7 +168,6 @@ if (isDashboardPage) {
     renderFiles();
     handleAddFileForm();
     handleLogout();
-    // Funzione handleFileInput (visualizzatore) è stata rimossa
 } else {
     // 2. Inizializzazione Pagina di Login
     handleLogin();
