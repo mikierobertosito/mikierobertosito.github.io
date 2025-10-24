@@ -18,10 +18,24 @@ body {
 h1 {
     color: #007bff;
     text-align: center;
-    margin-bottom: 30px;
+    margin-bottom: 5px;
 }
 
-/* Form Styles */
+h2 {
+    color: #343a40;
+    margin-top: 20px;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 5px;
+}
+
+hr {
+    border: 0;
+    height: 1px;
+    background: #ccc;
+    margin: 30px 0;
+}
+
+/* Form e Input */
 label {
     display: block;
     margin-top: 15px;
@@ -31,7 +45,8 @@ label {
 
 input[type="text"],
 input[type="password"],
-textarea {
+textarea,
+#fileInput {
     width: 100%;
     padding: 10px;
     border: 1px solid #ccc;
@@ -40,23 +55,26 @@ textarea {
     margin-bottom: 10px;
 }
 
-button[type="submit"] {
-    background-color: #28a745;
-    color: white;
+button {
     padding: 12px 20px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
     font-size: 16px;
+    margin-top: 10px;
+}
+
+button[type="submit"] {
+    background-color: #28a745;
+    color: white;
     width: 100%;
-    margin-top: 20px;
 }
 
 button[type="submit"]:hover {
     background-color: #218838;
 }
 
-/* Messages and Info */
+/* Messaggi */
 .error-message {
     color: #dc3545;
     text-align: center;
@@ -71,18 +89,15 @@ button[type="submit"]:hover {
     font-size: small;
 }
 
-/* Dashboard Styles */
+/* Dashboard */
 .logout-btn {
     float: right;
     background-color: #dc3545;
     color: white;
     padding: 8px 15px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
 }
 
-/* Table Styles */
+/* Table */
 #filesTable {
     width: 100%;
     border-collapse: collapse;
@@ -105,5 +120,15 @@ button[type="submit"]:hover {
     border: none;
     padding: 5px 10px;
     border-radius: 3px;
-    cursor: pointer;
+}
+
+/* Visualizzatore File */
+.file-content-box {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    padding: 15px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    max-height: 400px;
+    overflow-y: auto;
 }
