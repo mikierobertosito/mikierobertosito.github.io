@@ -1,74 +1,175 @@
-const STORAGE_KEY = 'clientInventoryDB'; // Key for LocalStorage
-let inventory = []; // Array to hold the inventory data (our "database" table)
+// =======================================================================
+// CONFIGURAZIONE GLOBALE e AUTENTICAZIONE
+// =======================================================================
 
-// --- Initial Setup and Loading ---
+// Chiave per i file (usa localStorage per mantenere i dati nel tempo)
+const STORAGE_KEY = 'clientFilesDB'; 
+// Chiave per lo stato di login (usa sessionStorage per forzare il login ad ogni apertura scheda)
+const IS_LOGGED_IN_KEY = 'isLoggedInSession'; 
 
-// 1. Load data from LocalStorage when the page loads
-function loadInventory() {
-    const data = localStorage.getItem(STORAGE_KEY);
-    if (data) {
-        inventory = JSON.parse(data);
-    }
-    renderInventory();
-}
+// Credenziali Utenti
+const USERS = {
+    'miki': 'miki1209la',
+    'roberto': 'robertomartino2'
+};
 
-// 2. Save the current inventory array to LocalStorage
-function saveInventory() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(inventory));
-}
+// Funzione di Autenticazione (usata in index.html)
+function handleLogin() {
+    const loginForm = document.getElementById('loginForm');
+    if (!loginForm) return;
 
-// --- Data Manipulation (CRUD) ---
+    loginForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+        
+        const username = document.getElementById('username').value.trim();
+        const password = document.getElementById('password').value;
+        const errorMessage = document.getElementById('errorMessage');
 
-// 3. Add a new item
-function addItem(name, category, quantity) {
-    const newItem = {
-        id: Date.now(), // Use timestamp as a simple unique ID
-        name: name,
-        category: category,
-        quantity: parseInt(quantity) // Ensure quantity is a number
-    };
-    inventory.push(newItem);
-    saveInventory();
-    renderInventory();
-}
-
-// --- Rendering ---
-
-// 4. Render the inventory table
-function renderInventory() {
-    const listBody = document.getElementById('inventoryList');
-    listBody.innerHTML = ''; // Clear existing rows
-
-    inventory.forEach(item => {
-        const row = listBody.insertRow();
-
-        // Cells for each column
-        row.insertCell().textContent = item.id;
-        row.insertCell().textContent = item.name;
-        row.insertCell().textContent = item.category;
-        row.insertCell().textContent = item.quantity;
+        if (USERS[username] && USERS[username] === password) {
+            // LOGIN OK: salva lo stato NELLA SESSIONE CORRENTE
+            sessionStorage.setItem(IS_LOGGED_IN_KEY, 'true'); 
+            window.location.href = 'dashboard.html';
+        } else {
+            // LOGIN FALLITO
+            errorMessage.textContent = 'Nome utente o password non validi.';
+            errorMessage.style.display = 'block';
+        }
     });
 }
 
-// --- Event Handlers ---
+// Funzione di Logout (usata in dashboard.html)
+function handleLogout() {
+    const logoutButton = document.getElementById('logoutButton');
+    if (!logoutButton) return;
 
-// 5. Handle form submission
-document.getElementById('addItemForm').addEventListener('submit', function(event) {
-    event.preventDefault(); // Stop the form from refreshing the page
+    logoutButton.addEventListener('click', function() {
+        // Rimuovi lo stato di login dalla sessione
+        sessionStorage.removeItem(IS_LOGGED_IN_KEY); 
+        // Reindirizza al login
+        window.location.href = 'index.html'; 
+    });
+}
 
-    const name = document.getElementById('name').value.trim();
-    const category = document.getElementById('category').value.trim();
-    const quantity = document.getElementById('quantity').value;
+// Controlla lo stato di autenticazione
+function checkAuth(isDashboard) {
+    // Legge lo stato SOLO da sessionStorage
+    const isLoggedIn = sessionStorage.getItem(IS_LOGGED_IN_KEY) === 'true'; 
+    
+    if (isDashboard && !isLoggedIn) {
+        // Se si tenta di accedere alla dashboard senza sessione attiva, reindirizza
+        window.location.href = 'index.html';
+    } 
+}
 
-    if (name && category && quantity) {
-        addItem(name, category, quantity);
 
-        // Clear the form fields
-        document.getElementById('addItemForm').reset();
-    } else {
-        alert('Please fill in all fields.');
+// =======================================================================
+// GESTIONE DEI DATI (DATABASE CLIENT-SIDE)
+// =======================================================================
+
+let files = []; 
+
+// Carica i file da LocalStorage
+function loadFiles() {
+    const data = localStorage.getItem(STORAGE_KEY);
+    if (data) {
+        files = JSON.parse(data);
     }
-});
+}
 
-// Load the data when the script starts
-loadInventory();
+// Salva i file su LocalStorage
+function saveFiles() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(files));
+}
+
+// Aggiunge un nuovo file (CREATE)
+function addFile(name, content) {
+    const newFile = {
+        id: Date.now(), // ID univoco
+        name: name,
+        content: content
+    };
+    files.push(newFile);
+    saveFiles();
+    renderFiles();
+}
+
+// Rimuove un file per ID (DELETE)
+function deleteFile(id) {
+    files = files.filter(file => file.id !== id);
+    saveFiles();
+    renderFiles();
+}
+
+// Renderizza la tabella dei file (READ)
+function renderFiles() {
+    const listBody = document.getElementById('filesList');
+    if (!listBody) return; 
+
+    listBody.innerHTML = ''; 
+
+    files.forEach(file => {
+        const row = listBody.insertRow();
+
+        row.insertCell().textContent = file.id;
+        row.insertCell().textContent = file.name;
+        
+        // Questo è il campo "Contenuto" che mostra il testo che hai scritto
+        const contentCell = row.insertCell();
+        contentCell.textContent = file.content.length > 50 ? 
+                                  file.content.substring(0, 50) + '...' : 
+                                  file.content;
+
+        const actionCell = row.insertCell();
+        const deleteBtn = document.createElement('button');
+        deleteBtn.textContent = 'Elimina';
+        deleteBtn.className = 'delete-btn';
+        deleteBtn.onclick = () => {
+            if (confirm(`Sei sicuro di voler eliminare il file "${file.name}"?`)) {
+                deleteFile(file.id);
+            }
+        };
+        actionCell.appendChild(deleteBtn);
+    });
+}
+
+// Gestisce l'invio del form di aggiunta file
+function handleAddFileForm() {
+    const addFileForm = document.getElementById('addFileForm');
+    if (!addFileForm) return;
+
+    addFileForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const fileName = document.getElementById('fileName').value.trim();
+        const fileContent = document.getElementById('fileContent').value.trim();
+
+        if (fileName && fileContent) {
+            addFile(fileName, fileContent);
+            addFileForm.reset();
+        } else {
+            alert('Per favore, compila tutti i campi.');
+        }
+    });
+}
+
+
+// =======================================================================
+// ESECUZIONE DEL CODICE
+// =======================================================================
+
+const isDashboardPage = window.location.pathname.includes('dashboard.html');
+
+// 1. Controllo Autenticazione
+checkAuth(isDashboardPage);
+
+if (isDashboardPage) {
+    // 2. Inizializzazione Dashboard
+    loadFiles();
+    renderFiles();
+    handleAddFileForm();
+    handleLogout();
+    // Funzione handleFileInput (visualizzatore) è stata rimossa
+} else {
+    // 2. Inizializzazione Pagina di Login
+    handleLogin();
+}
