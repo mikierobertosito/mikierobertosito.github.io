@@ -1,134 +1,68 @@
 body {
     font-family: sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #e9ecef;
+    margin: 20px;
+    background-color: #f4f4f9;
     color: #333;
 }
 
-.login-container, .container {
-    max-width: 600px;
-    margin: 50px auto;
-    padding: 30px;
+.container {
+    max-width: 800px;
+    margin: 0 auto;
     background: #fff;
-    border-radius: 10px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
-h1 {
+h1, h2 {
     color: #007bff;
     text-align: center;
-    margin-bottom: 5px;
 }
 
-h2 {
-    color: #343a40;
-    margin-top: 20px;
-    border-bottom: 2px solid #007bff;
-    padding-bottom: 5px;
-}
-
-hr {
-    border: 0;
-    height: 1px;
-    background: #ccc;
-    margin: 30px 0;
-}
-
-/* Form e Input */
-label {
-    display: block;
-    margin-top: 15px;
-    margin-bottom: 5px;
-    font-weight: bold;
-}
-
-input[type="text"],
-input[type="password"],
-textarea,
-#fileInput {
+/* Form Styling */
+#addItemForm input[type="text"],
+#addItemForm input[type="number"] {
     width: 100%;
     padding: 10px;
+    margin: 5px 0 15px 0;
+    display: inline-block;
     border: 1px solid #ccc;
-    border-radius: 5px;
+    border-radius: 4px;
     box-sizing: border-box;
-    margin-bottom: 10px;
 }
 
-button {
-    padding: 12px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    margin-top: 10px;
-}
-
-button[type="submit"] {
+#addItemForm button {
     background-color: #28a745;
     color: white;
-    width: 100%;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
 }
 
-button[type="submit"]:hover {
+#addItemForm button:hover {
     background-color: #218838;
 }
 
-/* Messaggi */
-.error-message {
-    color: #dc3545;
-    text-align: center;
-    margin-top: 10px;
-    font-weight: bold;
-}
-
-.info {
-    text-align: center;
-    margin-top: 20px;
-    color: #6c757d;
-    font-size: small;
-}
-
-/* Dashboard */
-.logout-btn {
-    float: right;
-    background-color: #dc3545;
-    color: white;
-    padding: 8px 15px;
-}
-
-/* Table */
-#filesTable {
+/* Table Styling */
+#inventoryTable {
     width: 100%;
     border-collapse: collapse;
     margin-top: 20px;
 }
 
-#filesTable th, #filesTable td {
+#inventoryTable th, #inventoryTable td {
     border: 1px solid #ddd;
-    padding: 10px;
+    padding: 12px;
     text-align: left;
 }
 
-#filesTable th {
+#inventoryTable th {
     background-color: #007bff;
     color: white;
 }
 
-.delete-btn {
-    background-color: #ffc107;
-    border: none;
-    padding: 5px 10px;
-    border-radius: 3px;
-}
-
-/* Visualizzatore File */
-.file-content-box {
-    background-color: #f8f9fa;
-    border: 1px solid #dee2e6;
-    padding: 15px;
-    white-space: pre-wrap;
-    word-wrap: break-word;
-    max-height: 400px;
-    overflow-y: auto;
+#inventoryTable tr:nth-child(even){
+    background-color: #f2f2f2;
 }
