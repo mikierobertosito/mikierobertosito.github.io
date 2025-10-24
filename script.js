@@ -9,8 +9,8 @@ const IS_LOGGED_IN_KEY = 'isLoggedInSession';
 
 // Credenziali Utenti
 const USERS = {
-    'miki': 'miki',
-    'roberto': 'roberto'
+    'miki': 'miki1209la',
+    'roberto': 'robertomartino2'
 };
 
 // Funzione di Autenticazione (usata in index.html)
