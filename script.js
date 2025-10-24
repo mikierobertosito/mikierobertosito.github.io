@@ -1,106 +1,96 @@
 // =======================================================================
-// CONFIGURAZIONE GLOBALE e AUTENTICAZIONE
+// CONFIGURAZIONE E AUTENTICAZIONE (Rimane come prima, ma è concettuale)
 // =======================================================================
 
-// Chiave per i file (usa localStorage per mantenere i dati nel tempo)
-const STORAGE_KEY = 'clientFilesDB'; 
-// Chiave per lo stato di login (usa sessionStorage per forzare il login ad ogni apertura scheda)
+// L'autenticazione è ancora gestita tramite sessionStorage per la sessione corrente
 const IS_LOGGED_IN_KEY = 'isLoggedInSession'; 
+const USERS = { 'miki': 'miki', 'roberto': 'roberto' };
 
-// Credenziali Utenti hardcoded
-const USERS = {
-    'miki': 'miki1209la',
-    'roberto': 'robertomartino2'
-};
-
-// Funzione di Autenticazione (usata in index.html)
-function handleLogin() {
-    const loginForm = document.getElementById('loginForm');
-    if (!loginForm) return;
-
-    loginForm.addEventListener('submit', function(event) {
-        event.preventDefault();
-        
-        const username = document.getElementById('username').value.trim();
-        const password = document.getElementById('password').value;
-        const errorMessage = document.getElementById('errorMessage');
-
-        if (USERS[username] && USERS[username] === password) {
-            // LOGIN OK: salva lo stato NELLA SESSIONE CORRENTE
-            sessionStorage.setItem(IS_LOGGED_IN_KEY, 'true'); 
-            // Reindirizza alla dashboard
-            window.location.href = 'dashboard.html'; 
-        } else {
-            // LOGIN FALLITO
-            errorMessage.textContent = 'Nome utente o password non validi.';
-            errorMessage.style.display = 'block';
-        }
-    });
-}
-
-// Funzione di Logout (usata in dashboard.html)
-function handleLogout() {
-    const logoutButton = document.getElementById('logoutButton');
-    if (!logoutButton) return;
-
-    logoutButton.addEventListener('click', function() {
-        // Rimuovi lo stato di login dalla sessione
-        sessionStorage.removeItem(IS_LOGGED_IN_KEY); 
-        // Torna al login
-        window.location.href = 'index.html'; 
-    });
-}
-
-// Controlla lo stato di autenticazione e reindirizza se necessario
-function checkAuth(isDashboard) {
-    const isLoggedIn = sessionStorage.getItem(IS_LOGGED_IN_KEY) === 'true'; 
-    
-    if (isDashboard && !isLoggedIn) {
-        // Se sulla dashboard ma non loggato, reindirizza al login
-        window.location.href = 'index.html';
-    } 
-}
+// Le funzioni handleLogin, handleLogout, checkAuth RIMANGONO INVARIATE, 
+// ma la parte di checkAuth e di reindirizzamento deve essere mantenuta.
+// ... (omesso per brevità, usa la versione precedente di queste funzioni) ...
 
 
 // =======================================================================
-// GESTIONE DEI DATI (DATABASE CLIENT-SIDE)
+// NUOVA GESTIONE DEI DATI (FIREBASE FIRESTORE)
 // =======================================================================
 
-let files = []; 
+let files = []; // Array per la visualizzazione locale
 
-// Carica i file da LocalStorage
-function loadFiles() {
-    const data = localStorage.getItem(STORAGE_KEY);
-    if (data) {
-        files = JSON.parse(data);
+// Riferimento al database
+let db; 
+
+// Funzione di inizializzazione che chiama la tua configurazione
+function initializeFirebase() {
+    // Se la configurazione è avvenuta in firebase_config.js, 
+    // otteniamo il riferimento al servizio Firestore
+    if (typeof firebase !== 'undefined') {
+        db = firebase.firestore();
+        console.log("Connessione a Firestore stabilita.");
+    } else {
+        console.error("Firebase non è stato inizializzato. Controlla firebase_config.js");
     }
 }
 
-// Salva i file su LocalStorage
-function saveFiles() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(files));
+// 🔄 Carica i dati da Firebase e attiva il listener
+function loadFiles() {
+    if (!db) return;
+
+    // Sostituiamo localStorage.getItem con una query in tempo reale
+    db.collection("database_miki_international")
+      .orderBy("id", "asc") // Ordina per l'ID di creazione (timestamp)
+      .onSnapshot((snapshot) => {
+        files = []; // Pulisci l'array locale
+        snapshot.forEach((doc) => {
+            // Aggiungi l'ID del documento Firestore per le operazioni di eliminazione
+            files.push({ ...doc.data(), firestoreId: doc.id }); 
+        });
+        renderFiles(); // Renderizza i dati appena ricevuti
+    }, (error) => {
+        console.error("Errore nel caricamento dati da Firestore: ", error);
+        alert("Impossibile caricare i dati dal server.");
+    });
 }
 
-// Aggiunge un nuovo file (CREATE)
+// 💾 Salva un nuovo file su Firebase (CREATE)
 function addFile(name, content) {
-    const newFile = {
-        id: Date.now(), // ID univoco
+    if (!db) return;
+
+    const newItem = {
+        id: Date.now(), // ID basato sul timestamp per l'ordinamento
         name: name,
         content: content
     };
-    files.push(newFile);
-    saveFiles();
-    renderFiles();
+    
+    // Invia i dati al cloud
+    db.collection("database_miki_international").add(newItem)
+      .then(() => {
+          console.log("Documento aggiunto con successo!");
+          // Non c'è bisogno di chiamare renderFiles() qui, 
+          // perché il listener (onSnapshot) si attiva automaticamente.
+      })
+      .catch((error) => {
+          console.error("Errore nell'aggiunta del documento: ", error);
+          alert("Errore durante il salvataggio sul cloud.");
+      });
 }
 
-// Rimuove un file per ID (DELETE)
-function deleteFile(id) {
-    files = files.filter(file => file.id !== id);
-    saveFiles();
-    renderFiles();
+// 🗑️ Rimuove un file da Firebase (DELETE)
+function deleteFile(firestoreId) {
+    if (!db) return;
+    
+    // Elimina il documento usando l'ID univoco di Firestore
+    db.collection("database_miki_international").doc(firestoreId).delete()
+      .then(() => {
+          console.log("Documento eliminato con successo!");
+      })
+      .catch((error) => {
+          console.error("Errore nell'eliminazione del documento: ", error);
+          alert("Errore durante l'eliminazione sul cloud.");
+      });
 }
 
-// Renderizza la tabella dei file (READ)
+// Modifica la funzione renderFiles per usare l'ID di Firestore per l'eliminazione
 function renderFiles() {
     const listBody = document.getElementById('filesList');
     if (!listBody) return; 
@@ -110,10 +100,10 @@ function renderFiles() {
     files.forEach(file => {
         const row = listBody.insertRow();
 
-        row.insertCell().textContent = file.id;
+        // Mostra l'ID del timestamp (o firestoreId, a tua scelta)
+        row.insertCell().textContent = file.id; 
         row.insertCell().textContent = file.name;
         
-        // Contenuto: mostra il testo che hai scritto
         const contentCell = row.insertCell();
         contentCell.textContent = file.content.length > 50 ? 
                                   file.content.substring(0, 50) + '...' : 
@@ -125,33 +115,16 @@ function renderFiles() {
         deleteBtn.className = 'delete-btn';
         deleteBtn.onclick = () => {
             if (confirm(`Sei sicuro di voler eliminare il file "${file.name}"?`)) {
-                deleteFile(file.id);
+                // CHIAMATA AL DELETE con l'ID di Firestore
+                deleteFile(file.firestoreId);
             }
         };
         actionCell.appendChild(deleteBtn);
     });
 }
 
-// Gestisce l'invio del form di aggiunta file
-function handleAddFileForm() {
-    const addFileForm = document.getElementById('addFileForm');
-    if (!addFileForm) return;
-
-    addFileForm.addEventListener('submit', function(event) {
-        event.preventDefault();
-
-        const fileName = document.getElementById('fileName').value.trim();
-        const fileContent = document.getElementById('fileContent').value.trim();
-
-        if (fileName && fileContent) {
-            addFile(fileName, fileContent);
-            addFileForm.reset();
-        } else {
-            alert('Per favore, compila tutti i campi.');
-        }
-    });
-}
-
+// ... handleAddFileForm RIMANE INVARIATA (chiama addFile) ...
+// ... checkAuth, handleLogin, handleLogout RIMANGONO INVARIATE ...
 
 // =======================================================================
 // ESECUZIONE DEL CODICE
@@ -159,16 +132,18 @@ function handleAddFileForm() {
 
 const isDashboardPage = window.location.pathname.includes('dashboard.html');
 
-// 1. Controllo Autenticazione
 checkAuth(isDashboardPage);
 
 if (isDashboardPage) {
-    // 2. Inizializzazione Dashboard
-    loadFiles();
-    renderFiles();
+    // 1. Inizializza la connessione al database
+    initializeFirebase(); 
+    
+    // 2. Carica i dati dal cloud (attiva il listener in tempo reale)
+    loadFiles(); 
+    
+    // 3. Logica dell'interfaccia
     handleAddFileForm();
     handleLogout();
 } else {
-    // 2. Inizializzazione Pagina di Login
     handleLogin();
 }
