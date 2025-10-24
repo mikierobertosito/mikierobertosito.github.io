@@ -4,17 +4,33 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Database</title>
-    <link rel="stylesheet" href="style2.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
     <div class="container">
-        <h1>Gestione File (Dati) 🗄️</h1>
+        <h1>Miki International Database - Dashboard 🗄️</h1>
         <button id="logoutButton" class="logout-btn">Esci</button>
         
         <hr>
 
-        <h2>Aggiungi Nuovo File</h2>
+        <h2>Visualizzatore di File Locale 🖼️📄</h2>
+        <div class="file-viewer-section">
+            <label for="fileInput">Seleziona un File (Immagine o Testo):</label>
+            <input type="file" id="fileInput" accept="image/*, text/*"> 
+            
+            <p id="fileNameDisplay" style="margin-top: 10px; font-style: italic;"></p>
+
+            <h3>Contenuto Completo:</h3>
+            
+            <img id="imagePreview" src="" alt="Anteprima Immagine" style="max-width: 100%; max-height: 300px; display: none; border: 1px solid #ccc; margin-bottom: 15px;">
+            
+            <pre id="fileContentDisplay" class="file-content-box"></pre>
+        </div>
+        
+        <hr>
+        
+        <h2>Aggiungi Nuovo File al Database</h2>
         <form id="addFileForm">
             <label for="fileName">Nome File:</label>
             <input type="text" id="fileName" required><br><br>
