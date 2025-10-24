@@ -46,7 +46,7 @@ function handleLogout() {
         // Rimuovi lo stato di login dalla sessione
         sessionStorage.removeItem(IS_LOGGED_IN_KEY); 
         // Reindirizza al login
-        window.location.href = 'database.html'; 
+        window.location.href = 'index.html'; 
     });
 }
 
@@ -59,16 +59,14 @@ function checkAuth(isDashboard) {
         // Se si tenta di accedere alla dashboard senza sessione attiva, reindirizza
         window.location.href = 'index.html';
     } 
-    // Non reindirizza automaticamente dalla index.html alla dashboard.html per
-    // garantire che l'utente veda sempre la schermata di login.
 }
 
 
 // =======================================================================
-// GESTIONE DEI DATI (FILE) - Usata in dashboard.html
+// GESTIONE DEI DATI (DATABASE CLIENT-SIDE)
 // =======================================================================
 
-let files = []; // Array in memoria che simula i record del database
+let files = []; 
 
 // Carica i file da LocalStorage
 function loadFiles() {
@@ -97,7 +95,6 @@ function addFile(name, content) {
 
 // Rimuove un file per ID (DELETE)
 function deleteFile(id) {
-    // Filtra l'array, mantenendo solo i file con ID diverso da quello da eliminare
     files = files.filter(file => file.id !== id);
     saveFiles();
     renderFiles();
@@ -108,7 +105,7 @@ function renderFiles() {
     const listBody = document.getElementById('filesList');
     if (!listBody) return; 
 
-    listBody.innerHTML = ''; // Pulisci le righe
+    listBody.innerHTML = ''; 
 
     files.forEach(file => {
         const row = listBody.insertRow();
@@ -157,22 +154,77 @@ function handleAddFileForm() {
 
 
 // =======================================================================
+// GESTIONE E VISUALIZZAZIONE FILE LOCALE (FileReader API)
+// =======================================================================
+
+function handleFileInput() {
+    const fileInput = document.getElementById('fileInput');
+    if (!fileInput) return;
+
+    fileInput.addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        
+        const fileNameDisplay = document.getElementById('fileNameDisplay');
+        const imagePreview = document.getElementById('imagePreview');
+        const fileContentDisplay = document.getElementById('fileContentDisplay');
+
+        // Resetta le aree di visualizzazione
+        imagePreview.style.display = 'none';
+        imagePreview.src = '';
+        fileContentDisplay.textContent = '';
+        fileNameDisplay.textContent = file ? `File selezionato: ${file.name}` : '';
+
+        if (!file) {
+            return;
+        }
+
+        const reader = new FileReader();
+
+        if (file.type.startsWith('image/')) {
+            // Leggi come URL dati per visualizzare l'immagine
+            reader.onload = function(e) {
+                imagePreview.src = e.target.result;
+                imagePreview.style.display = 'block';
+                fileContentDisplay.textContent = 'Tipo: Immagine - Visualizzata nell\'anteprima.';
+            };
+            reader.readAsDataURL(file);
+
+        } else if (file.type.startsWith('text/')) {
+            // Leggi come testo per visualizzare il contenuto completo
+            reader.onload = function(e) {
+                fileContentDisplay.textContent = e.target.result;
+            };
+            reader.readAsText(file);
+
+        } else {
+            // Gestione di altri tipi
+            reader.onload = function(e) {
+                fileContentDisplay.textContent = `[ATTENZIONE: File non testo/immagine (${file.type}). Non è possibile visualizzare il contenuto completo in questo contesto.]`;
+            };
+            // Tentiamo comunque di leggere come testo i primi byte per un riscontro rapido
+            reader.readAsText(file.slice(0, 1024));
+        }
+    });
+}
+
+
+// =======================================================================
 // ESECUZIONE DEL CODICE
 // =======================================================================
 
-// Determina se ci troviamo sulla dashboard
 const isDashboardPage = window.location.pathname.includes('dashboard.html');
 
-// 1. Controlla e applica le regole di autenticazione/reindirizzamento
+// 1. Controllo Autenticazione
 checkAuth(isDashboardPage);
 
 if (isDashboardPage) {
-    // Logica per la DASHBOARD (gestione dati e logout)
+    // 2. Inizializzazione Dashboard
     loadFiles();
     renderFiles();
     handleAddFileForm();
     handleLogout();
+    handleFileInput(); // Abilita la lettura dei file locali
 } else {
-    // Logica per la pagina di LOGIN
+    // 2. Inizializzazione Pagina di Login
     handleLogin();
 }
