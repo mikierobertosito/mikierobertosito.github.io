@@ -1,37 +1,178 @@
-document.addEventListener('DOMContentLoaded', () => {
-    // Funzione per caricare i dati JSON
-    async function fetchPosts() {
-        try {
-            const response = await fetch('posts.json');
-            // Se c'è un problema qui, controlla la console per SyntaxError
-            const posts = await response.json(); 
-            displayPosts(posts);
-        } catch (error) {
-            console.error('Errore nel caricamento dei post. Controlla posts.json:', error);
-            document.getElementById('posts-container').innerHTML = '<p style="color:red;">Non è stato possibile caricare i post. Controlla la console del browser (F12).</p>';
+// =======================================================================
+// CONFIGURAZIONE GLOBALE e AUTENTICAZIONE
+// =======================================================================
+
+// Chiave per i file (usa localStorage per mantenere i dati nel tempo)
+const STORAGE_KEY = 'clientFilesDB'; 
+// Chiave per lo stato di login (usa sessionStorage per forzare il login ad ogni apertura scheda)
+const IS_LOGGED_IN_KEY = 'isLoggedInSession'; 
+
+// Credenziali Utenti
+const USERS = {
+    'miki': 'miki',
+    'roberto': 'roberto'
+};
+
+// Funzione di Autenticazione (usata in index.html)
+function handleLogin() {
+    const loginForm = document.getElementById('loginForm');
+    if (!loginForm) return;
+
+    loginForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+        
+        const username = document.getElementById('username').value.trim();
+        const password = document.getElementById('password').value;
+        const errorMessage = document.getElementById('errorMessage');
+
+        if (USERS[username] && USERS[username] === password) {
+            // LOGIN OK: salva lo stato NELLA SESSIONE CORRENTE
+            sessionStorage.setItem(IS_LOGGED_IN_KEY, 'true'); 
+            window.location.href = 'dashboard.html';
+        } else {
+            // LOGIN FALLITO
+            errorMessage.textContent = 'Nome utente o password non validi.';
+            errorMessage.style.display = 'block';
         }
-    }
+    });
+}
+
+// Funzione di Logout (usata in dashboard.html)
+function handleLogout() {
+    const logoutButton = document.getElementById('logoutButton');
+    if (!logoutButton) return;
+
+    logoutButton.addEventListener('click', function() {
+        // Rimuovi lo stato di login dalla sessione
+        sessionStorage.removeItem(IS_LOGGED_IN_KEY); 
+        // Reindirizza al login
+        window.location.href = 'database.html'; 
+    });
+}
+
+// Controlla lo stato di autenticazione
+function checkAuth(isDashboard) {
+    // Legge lo stato SOLO da sessionStorage
+    const isLoggedIn = sessionStorage.getItem(IS_LOGGED_IN_KEY) === 'true'; 
     
-    // Funzione che crea l'HTML per ogni post
-    function displayPosts(posts) {
-        const postsContainer = document.getElementById('posts-container');
-        postsContainer.innerHTML = ''; 
+    if (isDashboard && !isLoggedIn) {
+        // Se si tenta di accedere alla dashboard senza sessione attiva, reindirizza
+        window.location.href = 'index.html';
+    } 
+    // Non reindirizza automaticamente dalla index.html alla dashboard.html per
+    // garantire che l'utente veda sempre la schermata di login.
+}
 
-        posts.forEach(post => {
-            const postElement = document.createElement('article');
-            postElement.className = 'blog-post';
-            
-            // Il link viene applicato solo al bottone
-            postElement.innerHTML = `
-                <h3>${post.titolo}</h3> 
-                <p>${post.descrizione}</p>
-                <p class="post-data">Pubblicato il: ${post.data}</p>
-                <a href="video.html" class="btn">Leggi di più</a>
-            `;
-            postsContainer.appendChild(postElement);
-        });
+
+// =======================================================================
+// GESTIONE DEI DATI (FILE) - Usata in dashboard.html
+// =======================================================================
+
+let files = []; // Array in memoria che simula i record del database
+
+// Carica i file da LocalStorage
+function loadFiles() {
+    const data = localStorage.getItem(STORAGE_KEY);
+    if (data) {
+        files = JSON.parse(data);
     }
+}
 
-    // Lancia il caricamento dei post all'apertura della pagina
-    fetchPosts(); 
-});
+// Salva i file su LocalStorage
+function saveFiles() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(files));
+}
+
+// Aggiunge un nuovo file (CREATE)
+function addFile(name, content) {
+    const newFile = {
+        id: Date.now(), // ID univoco
+        name: name,
+        content: content
+    };
+    files.push(newFile);
+    saveFiles();
+    renderFiles();
+}
+
+// Rimuove un file per ID (DELETE)
+function deleteFile(id) {
+    // Filtra l'array, mantenendo solo i file con ID diverso da quello da eliminare
+    files = files.filter(file => file.id !== id);
+    saveFiles();
+    renderFiles();
+}
+
+// Renderizza la tabella dei file (READ)
+function renderFiles() {
+    const listBody = document.getElementById('filesList');
+    if (!listBody) return; 
+
+    listBody.innerHTML = ''; // Pulisci le righe
+
+    files.forEach(file => {
+        const row = listBody.insertRow();
+
+        row.insertCell().textContent = file.id;
+        row.insertCell().textContent = file.name;
+        
+        // Contenuto: mostra solo un'anteprima
+        const contentCell = row.insertCell();
+        contentCell.textContent = file.content.length > 50 ? 
+                                  file.content.substring(0, 50) + '...' : 
+                                  file.content;
+
+        const actionCell = row.insertCell();
+        const deleteBtn = document.createElement('button');
+        deleteBtn.textContent = 'Elimina';
+        deleteBtn.className = 'delete-btn';
+        deleteBtn.onclick = () => {
+            if (confirm(`Sei sicuro di voler eliminare il file "${file.name}"?`)) {
+                deleteFile(file.id);
+            }
+        };
+        actionCell.appendChild(deleteBtn);
+    });
+}
+
+// Gestisce l'invio del form di aggiunta file
+function handleAddFileForm() {
+    const addFileForm = document.getElementById('addFileForm');
+    if (!addFileForm) return;
+
+    addFileForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const fileName = document.getElementById('fileName').value.trim();
+        const fileContent = document.getElementById('fileContent').value.trim();
+
+        if (fileName && fileContent) {
+            addFile(fileName, fileContent);
+            addFileForm.reset();
+        } else {
+            alert('Per favore, compila tutti i campi.');
+        }
+    });
+}
+
+
+// =======================================================================
+// ESECUZIONE DEL CODICE
+// =======================================================================
+
+// Determina se ci troviamo sulla dashboard
+const isDashboardPage = window.location.pathname.includes('dashboard.html');
+
+// 1. Controlla e applica le regole di autenticazione/reindirizzamento
+checkAuth(isDashboardPage);
+
+if (isDashboardPage) {
+    // Logica per la DASHBOARD (gestione dati e logout)
+    loadFiles();
+    renderFiles();
+    handleAddFileForm();
+    handleLogout();
+} else {
+    // Logica per la pagina di LOGIN
+    handleLogin();
+}

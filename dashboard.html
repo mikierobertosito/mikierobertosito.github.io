@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Database</title>
+    <link rel="stylesheet" href="style2.css">
+</head>
+<body>
+
+    <div class="container">
+        <h1>Gestione File (Dati) 🗄️</h1>
+        <button id="logoutButton" class="logout-btn">Esci</button>
+        
+        <hr>
+
+        <h2>Aggiungi Nuovo File</h2>
+        <form id="addFileForm">
+            <label for="fileName">Nome File:</label>
+            <input type="text" id="fileName" required><br><br>
+
+            <label for="fileContent">Contenuto (Testo):</label>
+            <textarea id="fileContent" rows="4" required></textarea><br><br>
+
+            <button type="submit">Salva File</button>
+        </form>
+
+        <hr>
+
+        <h2>Elenco File Salvati</h2>
+        <table id="filesTable">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nome File</th>
+                    <th>Contenuto</th>
+                    <th>Azione</th>
+                </tr>
+            </thead>
+            <tbody id="filesList">
+                </tbody>
+        </table>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

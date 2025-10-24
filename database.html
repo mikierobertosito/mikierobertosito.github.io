@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Database Client-Side</title>
+    <link rel="stylesheet" href="style2.css">
+</head>
+<body>
+
+    <div class="login-container">
+        <h1>Miki International Database 💾</h1> 
+        <h2>Accesso al Sistema 🔒</h2>
+        <form id="loginForm">
+            <label for="username">Nome Utente:</label>
+            <input type="text" id="username" required>
+            
+            <label for="password">Password:</label>
+            <input type="password" id="password" required>
+            
+            <button type="submit">Accedi</button>
+            <p id="errorMessage" class="error-message"></p>
+        </form>
+        <p class="info">ATTENZIONE questo e' un database privato</p>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
