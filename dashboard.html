@@ -1,59 +1,43 @@
 <!DOCTYPE html>
-<html lang="it">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Database</title>
-    <link rel="stylesheet" href="style2.css">
+    <title>Database Client-Side (Demo)</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
+    <h1>Client-Side "Database" 💾</h1>
+
     <div class="container">
-        <h1>Miki International Database - Dashboard 🗄️</h1>
-        <button id="logoutButton" class="logout-btn">Esci</button>
-        
-        <hr>
+        <h2>Add New Item</h2>
+        <form id="addItemForm">
+            <label for="name">Name:</label>
+            <input type="text" id="name" required><br><br>
 
-        <h2>Visualizzatore di File Locale 🖼️📄</h2>
-        <div class="file-viewer-section">
-            <label for="fileInput">Seleziona un File (Immagine o Testo):</label>
-            <input type="file" id="fileInput" accept="image/*, text/*"> 
-            
-            <p id="fileNameDisplay" style="margin-top: 10px; font-style: italic;"></p>
+            <label for="category">Category:</label>
+            <input type="text" id="category" required><br><br>
 
-            <h3>Contenuto Completo:</h3>
-            
-            <img id="imagePreview" src="" alt="Anteprima Immagine" style="max-width: 100%; max-height: 300px; display: none; border: 1px solid #ccc; margin-bottom: 15px;">
-            
-            <pre id="fileContentDisplay" class="file-content-box"></pre>
-        </div>
-        
-        <hr>
-        
-        <h2>Aggiungi Nuovo File al Database</h2>
-        <form id="addFileForm">
-            <label for="fileName">Nome File:</label>
-            <input type="text" id="fileName" required><br><br>
+            <label for="quantity">Quantity:</label>
+            <input type="number" id="quantity" required><br><br>
 
-            <label for="fileContent">Contenuto (Testo):</label>
-            <textarea id="fileContent" rows="4" required></textarea><br><br>
-
-            <button type="submit">Salva File</button>
+            <button type="submit">Add Item</button>
         </form>
 
         <hr>
 
-        <h2>Elenco File Salvati</h2>
-        <table id="filesTable">
+        <h2>Inventory List</h2>
+        <table id="inventoryTable">
             <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Nome File</th>
-                    <th>Contenuto</th>
-                    <th>Azione</th>
+                    <th>Name</th>
+                    <th>Category</th>
+                    <th>Quantity</th>
                 </tr>
             </thead>
-            <tbody id="filesList">
+            <tbody id="inventoryList">
                 </tbody>
         </table>
     </div>
