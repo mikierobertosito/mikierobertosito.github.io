@@ -4,7 +4,7 @@
 
 // L'autenticazione è ancora gestita tramite sessionStorage per la sessione corrente
 const IS_LOGGED_IN_KEY = 'isLoggedInSession'; 
-const USERS = { 'miki': 'miki', 'roberto': 'roberto' };
+const USERS = { 'miki': 'miki1209la', 'roberto': 'robertomartino2' };
 
 // Le funzioni handleLogin, handleLogout, checkAuth RIMANGONO INVARIATE, 
 // ma la parte di checkAuth e di reindirizzamento deve essere mantenuta.
