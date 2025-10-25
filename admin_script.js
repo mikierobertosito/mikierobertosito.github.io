@@ -1,5 +1,7 @@
+// admin_script.js
+
 // =========================================================================
-// !!! ASSICURATI CHE QUESTE VARIABILI SIANO IDENTICHE A QUELLE IN shop_inventory.js !!!
+// FUNZIONI CORE INVENTARIO (Devono essere identiche in shop_inventory.js)
 // =========================================================================
 
 const INVENTORY_KEY = 'shopInventory';
@@ -30,73 +32,138 @@ function saveInventory(inventory) {
 function renderInventoryList() {
     const inventory = getInventory();
     const listContainer = document.getElementById('inventory-list');
-    listContainer.innerHTML = ''; // Pulisci la lista
+    listContainer.innerHTML = ''; 
 
-    for (const id in inventory) {
+    // Mappa gli ID in un array, poi ordinali (opzionale)
+    const productIds = Object.keys(inventory).sort(); 
+
+    productIds.forEach(id => {
         const item = inventory[id];
         
-        // Crea l'elemento HTML per ogni prodotto
         const itemDiv = document.createElement('div');
         itemDiv.className = 'inventory-item';
         itemDiv.innerHTML = `
-            <h4>${item.name} (ID: ${id})</h4>
+            <div class="product-info-admin">
+                <input type="text" id="name-${id}" value="${item.name}" data-product-id="${id}" class="product-name-input">
+                <small>ID: ${id} | Prezzo: ${item.price} €</small>
+            </div>
             <div class="inventory-controls">
-                <label for="qty-${id}">Quantità:</label>
+                <label for="qty-${id}">Qtà:</label>
                 <input type="number" id="qty-${id}" value="${item.quantity}" min="0" data-product-id="${id}">
-                <button class="btn btn-primary save-btn" data-product-id="${id}">Salva</button>
+                <button class="btn btn-primary save-btn" data-product-id="${id}">Salva Modifiche</button>
+                <button class="delete-btn" data-product-id="${id}">Elimina</button>
             </div>
         `;
         listContainer.appendChild(itemDiv);
-    }
+    });
     
-    // Aggiungi gli ascoltatori per il click su ogni pulsante "Salva"
+    // Aggiungi gli ascoltatori
     document.querySelectorAll('.save-btn').forEach(button => {
         button.addEventListener('click', handleSaveClick);
     });
+    document.querySelectorAll('.delete-btn').forEach(button => {
+        button.addEventListener('click', handleDeleteClick);
+    });
 }
 
+/**
+ * Gestisce il salvataggio della Quantità e del Nome.
+ */
 function handleSaveClick(event) {
-    const button = event.target;
-    const productId = button.getAttribute('data-product-id');
-    const inputField = document.getElementById(`qty-${productId}`);
+    const productId = event.target.getAttribute('data-product-id');
+    const quantityInput = document.getElementById(`qty-${productId}`);
+    const nameInput = document.getElementById(`name-${productId}`);
     
-    // Leggi il nuovo valore, assicurati che sia un numero intero non negativo
-    const newQuantity = parseInt(inputField.value, 10);
+    const newQuantity = parseInt(quantityInput.value, 10);
+    const newName = nameInput.value.trim();
     
-    if (isNaN(newQuantity) || newQuantity < 0) {
-        alert("Inserisci una quantità valida (numero intero non negativo).");
+    if (isNaN(newQuantity) || newQuantity < 0 || newName === '') {
+        showStatusMessage("Errore: Dati non validi.", 'red');
         return;
     }
     
-    // Aggiorna l'inventario in localStorage
     const currentInventory = getInventory();
     if (currentInventory[productId]) {
         currentInventory[productId].quantity = newQuantity;
+        currentInventory[productId].name = newName; // Salva il nuovo nome
         saveInventory(currentInventory);
         
-        // Mostra il messaggio di successo
-        showStatusMessage("Inventario salvato con successo!");
-        
-        // Aggiorna il testo del pulsante brevemente
-        button.textContent = 'Salvato!';
-        setTimeout(() => {
-            button.textContent = 'Salva';
-        }, 1500);
-        
-    } else {
-        alert("Errore: Prodotto non trovato nell'inventario.");
+        showStatusMessage(`Prodotto "${newName}" (ID: ${productId}) salvato con successo!`, 'green');
     }
 }
 
-function showStatusMessage(message) {
-    const statusDiv = document.getElementById('status-message');
-    statusDiv.textContent = message;
-    statusDiv.style.display = 'block';
-    // Nascondi il messaggio dopo 3 secondi
-    setTimeout(() => {
-        statusDiv.style.display = 'none';
-    }, 3000);
+/**
+ * Gestisce l'eliminazione di un prodotto.
+ */
+function handleDeleteClick(event) {
+    const productId = event.target.getAttribute('data-product-id');
+    
+    if (confirm(`Sei sicuro di voler eliminare il prodotto ID ${productId}?`)) {
+        const currentInventory = getInventory();
+        
+        // delete è un operatore JavaScript nativo per rimuovere proprietà dagli oggetti
+        delete currentInventory[productId]; 
+        
+        saveInventory(currentInventory);
+        renderInventoryList(); // Ricarica la lista per rimuovere l'elemento dall'interfaccia
+        showStatusMessage(`Prodotto ID ${productId} eliminato con successo.`, 'orange');
+    }
 }
 
-// Avvia il caricamento della lista all'apertura della pagina
-document.addEventListener('DOMContentLoaded', renderInventoryList);
+/**
+ * Gestisce l'aggiunta di un nuovo prodotto.
+ */
+function handleAddProduct() {
+    const nameInput = document.getElementById('new-name');
+    const priceInput = document.getElementById('new-price');
+    const quantityInput = document.getElementById('new-quantity');
+    
+    const newName = nameInput.value.trim();
+    const newPrice = parseFloat(priceInput.value);
+    const newQuantity = parseInt(quantityInput.value, 10);
+    
+    if (newName === '' || isNaN(newPrice) || newPrice <= 0 || isNaN(newQuantity) || newQuantity < 0) {
+        showStatusMessage("Errore: Riempi tutti i campi correttamente.", 'red');
+        return;
+    }
+
+    const currentInventory = getInventory();
+    // Genera un ID univoco usando il timestamp corrente
+    const newId = Date.now().toString(); 
+
+    currentInventory[newId] = {
+        name: newName,
+        price: newPrice,
+        quantity: newQuantity,
+        // Puoi aggiungere qui 'img': 'url_immagine_default.jpg'
+    };
+
+    saveInventory(currentInventory);
+    
+    // Pulisci il modulo dopo l'aggiunta
+    nameInput.value = '';
+    priceInput.value = '';
+    quantityInput.value = 1;
+    
+    renderInventoryList(); // Ricarica la lista
+    showStatusMessage(`Nuovo prodotto "${newName}" (ID: ${newId}) aggiunto con successo!`, 'green');
+}
+
+function showStatusMessage(message, color) {
+    const statusDiv = document.getElementById('status-message');
+    statusDiv.textContent = message;
+    statusDiv.style.borderColor = color;
+    statusDiv.style.color = color;
+    statusDiv.style.backgroundColor = color === 'red' ? '#ffebeb' : '#eafaea';
+    statusDiv.style.display = 'block';
+    
+    setTimeout(() => {
+        statusDiv.style.display = 'none';
+    }, 4000);
+}
+
+// Inizializza
+document.addEventListener('DOMContentLoaded', () => {
+    renderInventoryList();
+    document.getElementById('add-btn').addEventListener('click', handleAddProduct);
+});
