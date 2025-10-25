@@ -4,7 +4,7 @@
 const INVENTORY_KEY = 'shopInventory';
 
 // IL TUO NUMERO DI TELEFONO (con prefisso internazionale, es. Italia +39)
-const WHATSAPP_NUMBER = +39 3201986375'; // <--- IL NUMERO RICHIESTO
+const WHATSAPP_NUMBER = '393201986375';
 
 // Inventario iniziale 
 const INITIAL_INVENTORY = {
