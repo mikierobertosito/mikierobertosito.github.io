@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestione Inventario Admin</title>
+    <link rel="stylesheet" href="style.css"> <style>
+        /* Stili specifici per l'Admin (puoi spostarli in style.css) */
+        body {
+            background-color: #f4f7f6;
+        }
+        .admin-container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 30px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .inventory-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .inventory-item:last-child {
+            border-bottom: none;
+        }
+        .inventory-item h4 {
+            margin: 0;
+            color: #2c3e50;
+        }
+        .inventory-controls input[type="number"] {
+            width: 80px;
+            padding: 8px;
+            text-align: center;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+        .admin-status {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #eafaea;
+            border: 1px solid #27ae60;
+            color: #27ae60;
+            border-radius: 4px;
+            text-align: center;
+            display: none; /* Nascosto di default */
+        }
+    </style>
+</head>
+<body>
+
+    <main class="admin-container">
+        <h1>Pannello di Gestione Inventario</h1>
+        <p>Modifica le quantità disponibili nel database simulato (localStorage). Queste modifiche saranno visibili immediatamente nella pagina Shop.</p>
+        
+        <div id="inventory-list">
+            <p style="text-align: center;">Caricamento inventario...</p>
+        </div>
+        
+        <div id="status-message" class="admin-status">
+            Inventario salvato con successo!
+        </div>
+    </main>
+    
+    <script src="admin_script.js"></script>
+    
+</body>
+</html>
