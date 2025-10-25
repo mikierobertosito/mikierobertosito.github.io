@@ -8,9 +8,9 @@ const WHATSAPP_NUMBER = '393201986375';
 
 // Inventario iniziale (lo stato di base)
 const INITIAL_INVENTORY = {
-    '1': { name: 'Tazza da Viaggio Esclusiva', price: 24.99, quantity: 12 },
-    '2': { name: 'Kit Lenti Wide-Angle (V2)', price: 49.99, quantity: 0 }, 
-    '3': { name: 'E-book: Le Ricette di Miki', price: 9.99, quantity: 999 },
+    '1': { name: 'MYSTERY BOX di cibo', price: 10, quantity: 0 },
+    '2': { name: 'Latiao', price: 10, quantity: 0 }, 
+    '3': { name: 'MYSTERY BOX di cibo', price: 20, quantity: 0 },
 };
 
 // =========================================================================
