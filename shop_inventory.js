@@ -25,7 +25,6 @@ let currentInventory = {
 /**
  * Aggiorna la disponibilità dei prodotti sulla pagina HTML.
  */
-function updateProductDisplay() {
     // 1. Legge l'inventario aggiornato
     const currentInventory = getInventory();
     
