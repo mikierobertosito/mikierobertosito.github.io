@@ -7,7 +7,7 @@ const INVENTORY_KEY = 'shopInventory';
 const WHATSAPP_NUMBER = '393201986375'; 
 
 // Inventario iniziale (lo stato di base)
-const INITIAL_INVENTORY = {
+let currentInventory = {
     '1': { name: 'MYSTERY BOX di cibo', price: 10, quantity: 1 },
     '2': { name: 'Latiao', price: 10, quantity: 0 }, 
     '3': { name: 'MYSTERY BOX di cibo', price: 20, quantity: 1 },
