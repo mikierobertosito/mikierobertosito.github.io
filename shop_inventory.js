@@ -16,24 +16,7 @@ const INITIAL_INVENTORY = {
     '6': { name: 'monster giapponese', price: 15, quantity: 1 },
 };
 
-// =========================================================================
-// FUNZIONI DI GESTIONE DATI (LocalStorage)
-// =========================================================================
 
-function getInventory() {
-    const savedInventory = localStorage.getItem(INVENTORY_KEY);
-    if (savedInventory) {
-        // Se i dati esistono, li parsiamo e li restituiamo
-        return JSON.parse(savedInventory);
-    }
-    // Altrimenti, impostiamo lo stato iniziale e lo salviamo
-    saveInventory(INITIAL_INVENTORY);
-    return INITIAL_INVENTORY;
-}
-
-function saveInventory(inventory) {
-    localStorage.setItem(INVENTORY_KEY, JSON.stringify(inventory));
-}
 
 // =========================================================================
 // FUNZIONI DI GESTIONE INTERFACCIA (UI)
