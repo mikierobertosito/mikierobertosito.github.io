@@ -8,9 +8,12 @@ const WHATSAPP_NUMBER = '393201986375';
 
 // Inventario iniziale (lo stato di base)
 const INITIAL_INVENTORY = {
-    '1': { name: 'MYSTERY BOX di cibo', price: 10, quantity: 0 },
+    '1': { name: 'MYSTERY BOX di cibo', price: 10, quantity: 1 },
     '2': { name: 'Latiao', price: 10, quantity: 0 }, 
-    '3': { name: 'MYSTERY BOX di cibo', price: 20, quantity: 0 },
+    '3': { name: 'MYSTERY BOX di cibo', price: 20, quantity: 1 },
+    '4': { name: 'prime a caso', price: 15, quantity: 2 },
+    '5': { name: 'monster a caso', price: 5, quantity: 2 },
+    '6': { name: 'monster giapponese', price: 15, quantity: 1 },
 };
 
 // =========================================================================
