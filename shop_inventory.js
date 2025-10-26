@@ -68,14 +68,12 @@ let currentInventory = {
  * Gestisce l'ordine: decrementa l'inventario e informa l'utente.
  */
 function placeOrder(productId) {
-    const currentInventory = getInventory();
     const prodotto = currentInventory[productId];
 
     if (prodotto && prodotto.quantity > 0) {
         
         // 1. SIMULAZIONE: Decrementa l'inventario localmente (riserva il pezzo)
         prodotto.quantity -= 1;
-        saveInventory(currentInventory);
 
         // 2. Aggiorna l'interfaccia UI IMMEDIATAMENTE
         updateProductDisplay();
